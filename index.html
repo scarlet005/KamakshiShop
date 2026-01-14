@@ -1,65 +1,4 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Shop Order Tool</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; }
-        h2 { text-align: center; }
-        .item { display: flex; justify-content: space-between; margin: 8px 0; }
-        input { width: 60px; }
-        button { width: 100%; padding: 10px; margin-top: 15px; font-size: 18px; }
-    </style>
-</head>
-<body>
 
-<h2>Order Items</h2>
-
-<!-- 🔧 ADD / REMOVE ITEMS HERE -->
-<div class="item">
-    <span>Sugar (₹45/kg)</span>
-    <input type="number" min="0" id="Sugar" placeholder="Qty">
-</div>
-
-<div class="item">
-    <span>Rice (₹60/kg)</span>
-    <input type="number" min="0" id="Rice" placeholder="Qty">
-</div>
-
-<div class="item">
-    <span>Milk (₹28/500ml)</span>
-    <input type="number" min="0" id="Milk" placeholder="Qty">
-</div>
-<!-- 🧺 Add more items copy-paste above block -->
-
-<button onclick="sendOrder()">Send Order on WhatsApp</button>
-
-<script>
-function sendOrder(){
-    let items = ["Sugar","Rice","Milk"]; // 🧾 add new items here when added above
-    let message = "Hello, I want to order:\n\n";
-    let hasItems = false;
-
-    items.forEach(item => {
-        let qty = document.getElementById(item).value;
-        if(qty && qty > 0){
-            message += `${item} - ${qty}\n`;
-            hasItems = true;
-        }
-    });
-
-    if(!hasItems){
-        alert("Please select at least 1 item!");
-        return;
-    }
-
-    let phone = "919500122469"; // ☎️ CHANGE to shopkeeper's number
-    let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-}
-</script>
-
-</body>
-</html> -->
 
 <!DOCTYPE html>
 <html>
@@ -215,6 +154,7 @@ renderItems(false);
 
 </body>
 </html>
+
 
 
 
