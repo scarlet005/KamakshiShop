@@ -4,66 +4,47 @@
     <title>KAMAKSHI SHOP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- 🔥 Firebase v8 SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <style>
         body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: #f5f5f5;
             margin: 0;
-            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f8;
         }
 
         /* ===== HEADER ===== */
-.header {
-    background: #2e7d32;
-    color: white;
-    padding: 15px;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-}
+        .header {
+            background: #2e7d32;
+            color: white;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+        }
 
-.header h1 {
-    margin: 0;
-    font-size: 26px;
-    letter-spacing: 1px;
-    text-align: center;
-}
+        .header h1 {
+            margin: 0;
+            text-align: center;
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
 
-.header-right {
-    text-align: right;
-}
+        .header-right {
+            text-align: right;
+        }
 
-.header button {
-    background: white;
-    color: #2e7d32;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* ===== MOBILE VIEW ===== */
-@media (max-width: 480px) {
-    .header {
-        grid-template-columns: 1fr;
-        row-gap: 10px;
-        text-align: center;
-    }
-
-    .header-right {
-        text-align: center;
-    }
-
-    .header button {
-        width: 100%;
-        max-width: 200px;
-    }
-
-    .header h1 {
-        font-size: 22px;
-    }
-}
+        .header button {
+            background: white;
+            color: #2e7d32;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
         /* ===== CONTAINER ===== */
         .container {
@@ -81,9 +62,9 @@
         }
 
         h2 {
-            margin-top: 0;
             text-align: center;
             color: #2e7d32;
+            margin-top: 0;
         }
 
         /* ===== ITEMS ===== */
@@ -124,7 +105,6 @@
             border: none;
             padding: 4px 8px;
             border-radius: 5px;
-            margin-left: 8px;
             cursor: pointer;
         }
 
@@ -134,6 +114,20 @@
 
         /* ===== MOBILE ===== */
         @media (max-width: 480px) {
+            .header {
+                grid-template-columns: 1fr;
+                row-gap: 10px;
+                text-align: center;
+            }
+
+            .header-right {
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
             .item {
                 flex-direction: column;
                 align-items: flex-start;
@@ -143,10 +137,6 @@
                 width: 100%;
                 margin-top: 5px;
             }
-
-            .header h1 {
-                font-size: 22px;
-            }
         }
     </style>
 </head>
@@ -155,15 +145,12 @@
 
 <!-- ===== HEADER ===== -->
 <div class="header">
-    <div class="header-left"></div>
-
+    <div></div>
     <h1>KAMAKSHI SHOP</h1>
-
     <div class="header-right">
         <button id="topActionBtn" onclick="topAction()">Admin Login</button>
     </div>
 </div>
-
 
 <div class="container">
 
@@ -175,10 +162,10 @@
     </div>
 
     <!-- 🔐 LOGIN PAGE -->
-    <div id="loginSection" class="page card">
+    <div id="loginPage" class="page card">
         <h2>Admin Login</h2>
-        <input type="text" id="username" placeholder="Username" class="main-input"><br><br>
-        <input type="password" id="password" placeholder="Password" class="main-input"><br><br>
+        <input type="text" id="username" placeholder="Username"><br><br>
+        <input type="password" id="password" placeholder="Password"><br><br>
         <button class="main-btn" onclick="adminLogin()">Login</button>
     </div>
 
@@ -194,19 +181,22 @@
 </div>
 
 <script>
-/* ===== STORAGE ===== */
-const STORAGE_KEY = "shop_items";
-const defaultItems = ["Sugar"];
+/* ===== FIREBASE CONFIG ===== */
+var firebaseConfig = {
+  apiKey: "AIzaSyB3yxJAu3r5scIqBr1xZTXbEVhlxcEZyTg",
+  authDomain: "kamakshi-shop.firebaseapp.com",
+  databaseURL: "https://kamakshi-shop-default-rtdb.firebaseio.com",
+  projectId: "kamakshi-shop",
+  storageBucket: "kamakshi-shop.appspot.com",
+  messagingSenderId: "298004586089",
+  appId: "1:298004586089:web:4eddd6671ad362eb900cf8"
+};
 
-function loadItems() {
-    let saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : defaultItems;
-}
-function saveItems(items) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
 
-let items = loadItems();
+/* ===== GLOBALS ===== */
+let items = [];
 let isAdmin = false;
 
 /* ===== PAGE SWITCH ===== */
@@ -217,7 +207,7 @@ function showPage(id) {
 
 function topAction() {
     if (isAdmin) logout();
-    else showPage("loginSection");
+    else showPage("loginPage");
 }
 
 /* ===== LOGIN ===== */
@@ -240,6 +230,13 @@ function logout() {
     document.getElementById("topActionBtn").innerText = "Admin Login";
     showPage("customerPage");
 }
+
+/* ===== FIREBASE LOAD (REAL-TIME) ===== */
+db.ref("items").on("value", snapshot => {
+    items = snapshot.val() || ["Sugar"];
+    renderCustomer();
+    if (isAdmin) renderAdmin();
+});
 
 /* ===== RENDER ===== */
 function renderCustomer() {
@@ -270,18 +267,15 @@ function renderAdmin() {
 function addItem() {
     let name = document.getElementById("newItemName").value.trim();
     if (!name) return alert("Enter product name");
+
     items.push(name);
-    saveItems(items);
-    renderAdmin();
-    renderCustomer();
+    db.ref("items").set(items);
     document.getElementById("newItemName").value = "";
 }
 
 function removeItem(i) {
     items.splice(i, 1);
-    saveItems(items);
-    renderAdmin();
-    renderCustomer();
+    db.ref("items").set(items);
 }
 
 /* ===== SEND ORDER ===== */
@@ -299,12 +293,9 @@ function sendOrder() {
 
     if (!ok) return alert("Please enter at least one item");
 
-    let phone = "919500122469";
+    let phone = "919790198479";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
 }
-
-/* ===== INIT ===== */
-renderCustomer();
 </script>
 
 </body>
