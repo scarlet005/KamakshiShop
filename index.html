@@ -1,160 +1,285 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shop Order Tool</title>
+    <title>KAMAKSHI SHOP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: auto;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
         }
-        h2 { text-align: center; }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: #2e7d32;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
+
+        .top-btn {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+
+        .top-btn button {
+            background: white;
+            color: #2e7d32;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 650px;
+            margin: auto;
+            padding: 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-top: 0;
+            text-align: center;
+            color: #2e7d32;
+        }
+
+        /* ===== ITEMS ===== */
         .item {
             display: flex;
             justify-content: space-between;
-            margin: 8px 0;
+            align-items: center;
+            margin: 10px 0;
         }
-        input {
-            width: 140px;
+
+        .item span {
+            font-weight: 600;
         }
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            font-size: 16px;
-        }
-        .admin-panel {
+
+        .item input {
+            width: 150px;
+            padding: 6px;
+            border-radius: 6px;
             border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 15px;
-            display: none;
         }
-        .remove-btn {
-            margin-left: 5px;
-            background-color: red;
+
+        /* ===== BUTTONS ===== */
+        .main-btn {
+            width: 100%;
+            background: #2e7d32;
             color: white;
             border: none;
-            padding: 4px 6px;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
             cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .remove-btn {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 5px;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+
+        /* ===== PAGES ===== */
+        .page { display: none; }
+        .active { display: block; }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 480px) {
+            .item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item input {
+                width: 100%;
+                margin-top: 5px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<h2>Shop Order</h2>
-
-<!-- 🔐 ADMIN LOGIN -->
-<div id="loginBox">
-    <h3>Admin Login</h3>
-    <input type="text" id="username" placeholder="Username"><br><br>
-    <input type="password" id="password" placeholder="Password"><br><br>
-    <button onclick="adminLogin()">Login</button>
+<!-- ===== HEADER ===== -->
+<div class="header">
+    <h1>KAMAKSHI SHOP</h1>
+    <div class="top-btn">
+        <button id="topActionBtn" onclick="topAction()">Admin Login</button>
+    </div>
 </div>
 
-<!-- 👩‍💼 ADMIN PANEL -->
-<div class="admin-panel" id="adminPanel">
-    <h3>Admin Panel</h3>
-    <input type="text" id="newItemName" placeholder="Item Name (Eg: Oil)">
-    <input type="text" id="newItemPrice" placeholder="Price (Eg: ₹180/L)">
-    <button onclick="addItem()">Add Item</button>
+<div class="container">
+
+    <!-- 🧑 CUSTOMER PAGE -->
+    <div id="customerPage" class="page active card">
+        <h2>Place Your Order</h2>
+        <div id="itemsContainer"></div>
+        <button class="main-btn" onclick="sendOrder()">Send Order on WhatsApp</button>
+    </div>
+
+    <!-- 🔐 LOGIN PAGE -->
+    <div id="loginSection" class="page card">
+        <h2>Admin Login</h2>
+        <input type="text" id="username" placeholder="Username" class="main-input"><br><br>
+        <input type="password" id="password" placeholder="Password" class="main-input"><br><br>
+        <button class="main-btn" onclick="adminLogin()">Login</button>
+    </div>
+
+    <!-- 👩‍💼 ADMIN PAGE -->
+    <div id="adminPage" class="page card">
+        <h2>Admin Panel</h2>
+        <input type="text" id="newItemName" placeholder="Product Name (Eg: Sugar)">
+        <button class="main-btn" onclick="addItem()">Add Product</button>
+        <br><br>
+        <div id="adminItems"></div>
+    </div>
+
 </div>
-
-<!-- 🧺 ITEMS LIST -->
-<div id="itemsContainer"></div>
-
-<button onclick="sendOrder()">Send Order on WhatsApp</button>
 
 <script>
-let items = [
-    { name: "Sugar", price: "₹45/kg" },
-    { name: "Rice", price: "₹60/kg" },
-    { name: "Milk", price: "₹28/500ml" }
-];
+/* ===== STORAGE ===== */
+const STORAGE_KEY = "shop_items";
+const defaultItems = ["Sugar"];
 
-function renderItems(isAdmin = false) {
-    let container = document.getElementById("itemsContainer");
-    container.innerHTML = "";
-
-    items.forEach((item, index) => {
-        let div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-            <span>${item.name} (${item.price})</span>
-            <div>
-                <input type="text" placeholder="Qty (eg: 1 kg)" id="qty-${index}">
-                ${isAdmin ? `<button class="remove-btn" onclick="removeItem(${index})">X</button>` : ""}
-            </div>
-        `;
-        container.appendChild(div);
-    });
+function loadItems() {
+    let saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : defaultItems;
+}
+function saveItems(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
-function adminLogin() {
-    let user = document.getElementById("username").value;
-    let pass = document.getElementById("password").value;
+let items = loadItems();
+let isAdmin = false;
 
-    if (user === "Karuna" && pass === "12345678") {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-        renderItems(true);
-        alert("Admin Logged In");
+/* ===== PAGE SWITCH ===== */
+function showPage(id) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+function topAction() {
+    if (isAdmin) logout();
+    else showPage("loginSection");
+}
+
+/* ===== LOGIN ===== */
+function adminLogin() {
+    let u = document.getElementById("username").value;
+    let p = document.getElementById("password").value;
+
+    if (u === "Karuna" && p === "12345678") {
+        isAdmin = true;
+        document.getElementById("topActionBtn").innerText = "Logout";
+        showPage("adminPage");
+        renderAdmin();
     } else {
         alert("Invalid Credentials");
     }
 }
 
+function logout() {
+    isAdmin = false;
+    document.getElementById("topActionBtn").innerText = "Admin Login";
+    showPage("customerPage");
+}
+
+/* ===== RENDER ===== */
+function renderCustomer() {
+    let c = document.getElementById("itemsContainer");
+    c.innerHTML = "";
+    items.forEach((item, i) => {
+        c.innerHTML += `
+            <div class="item">
+                <span>${i + 1}. ${item}</span>
+                <input type="text" id="qty-${i}" placeholder="Qty (eg: 1 kg / 2 L)">
+            </div>`;
+    });
+}
+
+function renderAdmin() {
+    let a = document.getElementById("adminItems");
+    a.innerHTML = "";
+    items.forEach((item, i) => {
+        a.innerHTML += `
+            <div class="item">
+                <span>${i + 1}. ${item}</span>
+                <button class="remove-btn" onclick="removeItem(${i})">Remove</button>
+            </div>`;
+    });
+}
+
+/* ===== ADMIN ACTIONS ===== */
 function addItem() {
-    let name = document.getElementById("newItemName").value;
-    let price = document.getElementById("newItemPrice").value;
-
-    if (!name || !price) {
-        alert("Enter item name and price");
-        return;
-    }
-
-    items.push({ name, price });
-    renderItems(true);
-
+    let name = document.getElementById("newItemName").value.trim();
+    if (!name) return alert("Enter product name");
+    items.push(name);
+    saveItems(items);
+    renderAdmin();
+    renderCustomer();
     document.getElementById("newItemName").value = "";
-    document.getElementById("newItemPrice").value = "";
 }
 
-function removeItem(index) {
-    items.splice(index, 1);
-    renderItems(true);
+function removeItem(i) {
+    items.splice(i, 1);
+    saveItems(items);
+    renderAdmin();
+    renderCustomer();
 }
 
+/* ===== SEND ORDER ===== */
 function sendOrder() {
-    let message = "Hello, I want to order:\n\n";
-    let hasItems = false;
+    let msg = "Hello, I want to order from KAMAKSHI SHOP:\n\n";
+    let ok = false;
 
-    items.forEach((item, index) => {
-        let qty = document.getElementById(`qty-${index}`).value;
-        if (qty) {
-            message += `${item.name} (${item.price}) - ${qty}\n`;
-            hasItems = true;
+    items.forEach((item, i) => {
+        let q = document.getElementById(`qty-${i}`).value;
+        if (q) {
+            msg += `${i + 1}. ${item} - ${q}\n`;
+            ok = true;
         }
     });
 
-    if (!hasItems) {
-        alert("Please enter at least one item quantity");
-        return;
-    }
+    if (!ok) return alert("Please enter at least one item");
 
-    let phone = "919500122469"; // change shop number
-    let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
+    let phone = "919500122469";
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
 }
 
-// Initial render for customers
-renderItems(false);
+/* ===== INIT ===== */
+renderCustomer();
 </script>
 
 </body>
 </html>
-
-
-
-
