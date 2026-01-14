@@ -13,35 +13,57 @@
         }
 
         /* ===== HEADER ===== */
-        .header {
-            background: #2e7d32;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            position: relative;
-        }
+.header {
+    background: #2e7d32;
+    color: white;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+}
 
-        .header h1 {
-            margin: 0;
-            font-size: 26px;
-            letter-spacing: 1px;
-        }
+.header h1 {
+    margin: 0;
+    font-size: 26px;
+    letter-spacing: 1px;
+    text-align: center;
+}
 
-        .top-btn {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-        }
+.header-right {
+    text-align: right;
+}
 
-        .top-btn button {
-            background: white;
-            color: #2e7d32;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.header button {
+    background: white;
+    color: #2e7d32;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ===== MOBILE VIEW ===== */
+@media (max-width: 480px) {
+    .header {
+        grid-template-columns: 1fr;
+        row-gap: 10px;
+        text-align: center;
+    }
+
+    .header-right {
+        text-align: center;
+    }
+
+    .header button {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .header h1 {
+        font-size: 22px;
+    }
+}
 
         /* ===== CONTAINER ===== */
         .container {
@@ -133,11 +155,15 @@
 
 <!-- ===== HEADER ===== -->
 <div class="header">
+    <div class="header-left"></div>
+
     <h1>KAMAKSHI SHOP</h1>
-    <div class="top-btn">
+
+    <div class="header-right">
         <button id="topActionBtn" onclick="topAction()">Admin Login</button>
     </div>
 </div>
+
 
 <div class="container">
 
